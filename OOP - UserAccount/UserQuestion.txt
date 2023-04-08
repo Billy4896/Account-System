@@ -1,4 +1,1 @@
-{"username": "BILLY", "recoveryPass": "PENGUIN"}
-{"username": "TIMMY", "recoveryPass": "TEST"}
-{"username": "DOLBY", "recoveryPass": "CAT"}
-{"username": "RUSTY", "recoveryPass": "RUSTY"}
+{"username": "BILLY", "recoveryPass": "bc216f501386c3fa22512971dbcd835270400529c419bc5191c40615065be744beacfdfcc1c0ed55878c4a28a83d54373252029f604f176b69dc4b89ca0d2341"}

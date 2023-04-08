@@ -1,5 +1,6 @@
 import re
 import json
+import hashlib
 
 
 class Account:
@@ -43,7 +44,7 @@ class Account:
 
         # If the file cannot be found print error statement.
         except FileNotFoundError:
-            print("File does not exist, please contact support.")
+            print("File does not exist, creating file...")
 
         while True:
             if username in lines:
@@ -90,10 +91,12 @@ class Account:
         recoveryPassword = self.get_recovery_password()
         f = 'UserDetails.txt'
         ff = 'UserQuestion.txt'
+        hashed_password = hashlib.sha512(password.encode()).hexdigest()
+        hashed_recoveryPassword = hashlib.sha512(recoveryPassword.encode()).hexdigest()
         try:
             # Open the .bin file for writing - ('With open' automatically closes the file upon completion)
             with open(f, "a") as file:
-                credentials = {'username': username, 'password': password}
+                credentials = {'username': username, 'password': hashed_password}
                 file.write(json.dumps(credentials) + "\n")
         # If the file cannot be found print error statement.
         except FileNotFoundError:
@@ -102,7 +105,7 @@ class Account:
         try:
             # Open the .bin file for writing - ('With open' automatically closes the file upon completion)
             with open(ff, "a") as file:
-                credentials = {'username': username, 'recoveryPass': recoveryPassword}
+                credentials = {'username': username, 'recoveryPass': hashed_recoveryPassword}
                 file.write(json.dumps(credentials) + "\n")
         # If the file cannot be found print error statement.
         except FileNotFoundError:
@@ -128,7 +131,7 @@ class Account:
                 exit()
             match_found = False
             for dictionary in dict_list:
-                if dictionary.get(search_key1) == username and dictionary.get(search_key2) == password:
+                if dictionary.get(search_key1) == username and hashlib.sha512(password.encode()).hexdigest() == dictionary.get(search_key2):
                     print("Login successful!")
                     match_found = True
                     break  # Stop searching after the first match is found
@@ -162,7 +165,7 @@ class Account:
         while True:
             match_found = False
             for dictionary in dict_list:
-                if dictionary.get(search_key1) == search_value1 and dictionary.get(search_key2) == search_value2:
+                if dictionary.get(search_key1) == search_value1 and hashlib.sha512(search_value2.encode()).hexdigest() == dictionary.get(search_key2):
                     print("A match is found!")
                     match_found = True
                     break  # Stop searching after the first match is found
@@ -195,13 +198,16 @@ class Account:
             else:
                 break  # Stop the while loop
 
+        # Hash the password using SHA-256
+        hashed_password = hashlib.sha256(new_value.encode()).hexdigest()
+
         # Read all the dictionaries from the file
         with open(ff, "r") as file:
             dict_list = [json.loads(line) for line in file]
 
         # Modify the required dictionary
         for dictionary in dict_list:
-            if dictionary.get(search_key1) == search_value1:
+            if dictionary.get(search_key1) == hashed_password:
                 dictionary[modify_key] = new_value
                 break  # Stop searching after the first match is found
 
